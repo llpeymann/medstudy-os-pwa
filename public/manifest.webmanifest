@@ -1,0 +1,18 @@
+{
+  "name": "MEDSTUDY OS | سیستم مدیریت هوشمند مطالعه پزشکی",
+  "short_name": "MEDSTUDY OS",
+  "description": "سیستم مدیریت هوشمند مطالعه و مرور فاصله‌دار برای آزمون جامع علوم پایه پزشکی",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "fa",
+  "background_color": "#0f172a",
+  "theme_color": "#0d9488",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
