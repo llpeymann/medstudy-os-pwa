@@ -4,6 +4,7 @@ async (page) => {
   const out = { debug: {} };
   const check = (id, name, ok, detail = '') => results.push({ id, name, ok: !!ok, detail });
   const projectRoot = process.cwd();
+  const appUrl = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173/';
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const btn = (t) => page.locator('button', { hasText: t }).first();
   const click = async (t) => { await btn(t).click({ force: true }); };
@@ -18,7 +19,7 @@ async (page) => {
     if (m.type() === 'error' && !t.includes('Download the React DevTools')) errors.push('console: ' + t);
   });
 
-  await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+  await page.goto(appUrl, { waitUntil: 'networkidle' });
   await sleep(700);
   try {
 
@@ -32,7 +33,7 @@ async (page) => {
   await page.locator('input[placeholder="حذف"]').fill('حذف');
   await click('پاک‌سازی نهایی');
   await sleep(700);
-  await page.goto('http://localhost:5173/#/subjects');
+  await page.goto(`${appUrl}#/subjects`);
   await sleep(500);
 
   /* --- سناریو ۲۰: فارسی و RTL --- */
@@ -243,7 +244,7 @@ async (page) => {
   await page.setViewportSize({ width: 1280, height: 800 });
 
   /* --- اسکرین‌شات‌های تحویل --- */
-  await page.goto('http://localhost:5173/#/dashboard', { waitUntil: 'networkidle' });
+  await page.goto(`${appUrl}#/dashboard`, { waitUntil: 'networkidle' });
   await sleep(700);
   await page.screenshot({ path: `${projectRoot}/tests/screenshot-dashboard-light.png`, fullPage: true });
   await page.evaluate(() => document.documentElement.classList.add('dark'));
