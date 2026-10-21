@@ -1,5 +1,5 @@
 /* ============ چارچوب اصلی — سایدبار، هدر، ناوبری موبایل ============ */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard, CalendarCheck, BookOpen, Brain, CalendarDays, FlaskConical,
   NotebookPen, Timer, BarChart3, Settings as SettingsIcon, Sun, Moon, Monitor,
@@ -147,6 +147,20 @@ export default function Layout({ route, navigate, children }: {
   const examIn = daysUntil(state.settings.examDate);
   const activeIdx = NAV.findIndex((n) => n.key === route);
 
+  // هر تغییر مسیر (از منوی کشویی، ناوبری پایین یا hash) باید منوی موبایل را ببندد.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [route]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [mobileOpen]);
+
   const countdownChip = useMemo(() => {
     if (examIn === null) return { text: 'تاریخ آزمون ثبت نشده', tone: 'gray' as const };
     if (examIn < 0) return { text: 'آزمون برگزار شده', tone: 'rose' as const };
@@ -157,7 +171,7 @@ export default function Layout({ route, navigate, children }: {
   return (
     <div className="app-shell">
       {/* سایدبار دسکتاپ (راست‌چین) */}
-      <aside className="sidebar hidden lg:flex">
+      <aside className="sidebar hidden flex-col lg:flex">
         <div className="px-4 pt-5 pb-4 flex items-center gap-2.5">
           <div className="logo-badge"><GraduationCap size={20} /></div>
           <div className="min-w-0">
@@ -191,7 +205,16 @@ export default function Layout({ route, navigate, children }: {
       <div className="flex-1 min-w-0 flex flex-col min-h-0">
         {/* هدر */}
         <header className="app-header">
-          <button className="icon-btn lg:hidden" onClick={() => setMobileOpen(true)} title="منو"><Menu size={19} /></button>
+          <button
+            className="icon-btn mobile-menu-toggle lg:hidden"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-controls="mobile-menu"
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? 'بستن منو' : 'باز کردن منو'}
+            title={mobileOpen ? 'بستن منو' : 'باز کردن منو'}
+          >
+            {mobileOpen ? <X size={19} /> : <Menu size={19} />}
+          </button>
           <div className="flex items-center gap-2 min-w-0">
             <span className="font-extrabold text-sm sm:text-base truncate">{ROUTE_TITLES[route]}</span>
           </div>
@@ -235,8 +258,14 @@ export default function Layout({ route, navigate, children }: {
 
       {/* کشوی موبایل */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[70] lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
+        <div
+          id="mobile-menu"
+          className="mobile-drawer-layer lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="منوی اصلی"
+        >
+          <div className="mobile-menu-backdrop absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
           <div className="absolute inset-y-0 right-0 w-72 max-w-[85vw] bg-surface border-s border-border flex flex-col sheet-panel">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex items-center gap-2">

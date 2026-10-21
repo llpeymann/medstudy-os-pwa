@@ -154,7 +154,7 @@ try {
   if (result.debug?.fatal) console.error(`FATAL ${result.debug.fatal}`);
   if (result.consoleErrors?.length) console.error(result.consoleErrors.join('\n'));
 
-  if (result.failed > 0 || result.total !== 21 || result.debug?.fatal || result.consoleErrors?.length) {
+  if (result.failed > 0 || result.total !== 22 || result.debug?.fatal || result.consoleErrors?.length) {
     process.exitCode = 1;
   }
 } finally {

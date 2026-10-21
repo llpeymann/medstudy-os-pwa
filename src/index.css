@@ -222,7 +222,7 @@ body {
 
 /* ---------- چارچوب ---------- */
 .app-shell { display: flex; height: 100dvh; overflow: hidden; background: var(--bg); }
-.sidebar { width: 15rem; flex-shrink: 0; background: var(--surface); border-inline-start: 1px solid var(--border); display: flex; flex-direction: column; }
+.sidebar { width: 15rem; flex-shrink: 0; background: var(--surface); border-inline-start: 1px solid var(--border); }
 .page-scroll { overscroll-behavior: contain; }
 
 .logo-badge {
@@ -247,6 +247,7 @@ body {
 
 .app-header {
   display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  min-height: 3.3rem;
   padding: .55rem 1rem; border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 82%, transparent);
   backdrop-filter: blur(10px); z-index: 40;
@@ -255,6 +256,12 @@ body {
 .mobile-nav {
   display: flex; border-top: 1px solid var(--border); background: var(--surface);
   padding: .3rem .5rem calc(.3rem + env(safe-area-inset-bottom)); gap: .2rem;
+}
+.mobile-drawer-layer {
+  position: fixed; inset-inline: 0; top: 3.3rem; bottom: 0; z-index: 70;
+}
+@media (min-width: 64rem) {
+  .mobile-menu-toggle { display: none; }
 }
 .mobile-nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;

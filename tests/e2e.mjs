@@ -241,7 +241,45 @@ async (page) => {
   const mobileNav = await page.locator('.mobile-nav').first().isVisible();
   await page.screenshot({ path: `${projectRoot}/tests/screenshot-mobile.png` });
   check(19, 'نمایش در اندازه موبایل', mobileNav, 'ناوبری پایین نمایش داده شد');
+
+  /* --- سناریو ۲۲: رگرسیون منوی همبرگری موبایل --- */
+  const sidebar = page.locator('.sidebar');
+  const mainBox = await page.locator('main').boundingBox();
+  const menuToggle = page.locator('header button[aria-controls="mobile-menu"]');
+  const initiallyClosed = await page.locator('#mobile-menu').count() === 0 &&
+    await menuToggle.getAttribute('aria-expanded') === 'false';
+  const sidebarHidden = !(await sidebar.isVisible());
+  const contentHasFullWidth = Boolean(mainBox && mainBox.width >= 360);
+
+  await menuToggle.click();
+  const opened = await page.locator('#mobile-menu').isVisible() &&
+    await menuToggle.getAttribute('aria-expanded') === 'true';
+  await menuToggle.click();
+  const toggledClosed = await page.locator('#mobile-menu').count() === 0 &&
+    await menuToggle.getAttribute('aria-expanded') === 'false';
+
+  await menuToggle.click();
+  await page.locator('.mobile-menu-backdrop').click({ position: { x: 5, y: 5 } });
+  const outsideClosed = await page.locator('#mobile-menu').count() === 0;
+
+  await menuToggle.click();
+  await page.locator('#mobile-menu .nav-item', { hasText: 'دروس و مباحث' }).click();
+  await sleep(300);
+  const linkClosed = await page.locator('#mobile-menu').count() === 0 && page.url().includes('#/subjects');
+
   await page.setViewportSize({ width: 1280, height: 800 });
+  await sleep(300);
+  const desktopSidebarVisible = await sidebar.isVisible();
+  const desktopToggleHidden = !(await menuToggle.isVisible());
+  const desktopDrawerClosed = await page.locator('#mobile-menu').count() === 0;
+
+  check(
+    22,
+    'منوی همبرگری موبایل',
+    initiallyClosed && sidebarHidden && contentHasFullWidth && opened && toggledClosed && outsideClosed && linkClosed &&
+      desktopSidebarVisible && desktopToggleHidden && desktopDrawerClosed,
+    `initial=${initiallyClosed} sidebarHidden=${sidebarHidden} mainWidth=${Math.round(mainBox?.width ?? 0)} open=${opened} toggleClose=${toggledClosed} outsideClose=${outsideClosed} linkClose=${linkClosed} desktopSidebar=${desktopSidebarVisible} desktopToggleHidden=${desktopToggleHidden}`,
+  );
 
   /* --- اسکرین‌شات‌های تحویل --- */
   await page.goto(`${appUrl}#/dashboard`, { waitUntil: 'networkidle' });
